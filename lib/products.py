@@ -20,6 +20,7 @@ class Product:
             if span := soup.find('span', class_='a-price a-text-price'):
                 self.original_price = str2num(span.span.text)
 
+    @property
     def id(self) -> str:
         return self.url
 

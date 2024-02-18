@@ -13,8 +13,17 @@ class Tracking:
         self.product = product
 
     @property
-    def tagline(self) -> str:
-        return f'{self.user.email}:{self.product.id}'
+    def id(self) -> str:
+        return f'{self.user.id}:{self.product.id}'
 
-    def was_notified(self):
-        return self.tagline in self.deliveries
+    def get_notified_price(self) -> float | None:
+        return self.deliveries.get(self.id, None)
+
+    def notify(self) -> None:
+        print(f'Notify {self.id}')
+
+    def remove_delivery(self) -> None:
+        del self.deliveries[self.id]
+
+    def update_delivery(self) -> None:
+        self.deliveries[self.id] = self.product.current_price
