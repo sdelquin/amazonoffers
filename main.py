@@ -1,12 +1,9 @@
-import re
-
-import requests
-from bs4 import BeautifulSoup
+import yaml
 
 import settings
+from lib.products import Product
 
-response = requests.get(settings.TARGET_URL, headers={'User-Agent': settings.USER_AGENT})
-soup = BeautifulSoup(response.content, 'html.parser')
-if offer := soup.find('span', class_='savingsPercentage'):
-    if discount := re.search(r'\d+', offer.text):
-        print(discount[0])
+config = yaml.safe_load(settings.CONFIG_PATH.read_text())
+for url in config:
+    p = Product(url)
+    print(p)
