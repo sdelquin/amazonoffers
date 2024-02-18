@@ -1,9 +1,4 @@
-import yaml
+from lib.dispatcher import Dispatcher
 
-import settings
-from lib.products import Product
-
-config = yaml.safe_load(settings.CONFIG_PATH.read_text())
-for url in config:
-    p = Product(url)
-    print(p)
+d = Dispatcher()
+d.dispatch()

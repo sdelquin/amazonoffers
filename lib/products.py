@@ -6,7 +6,9 @@ from lib.utils import str2num
 
 
 class Product:
-    def __init__(self, url: str):
+    def __init__(self, alias: str, url: str):
+        self.alias = alias
+        self.url = url
         response = requests.get(url, headers={'User-Agent': settings.USER_AGENT})
         soup = BeautifulSoup(response.content, 'html.parser')
         if span := soup.find('span', id='productTitle'):
@@ -17,6 +19,9 @@ class Product:
             self.discount = str2num(span.text, int)
             if span := soup.find('span', class_='a-price a-text-price'):
                 self.original_price = str2num(span.span.text)
+
+    def id(self) -> str:
+        return self.url
 
     def has_discount(self) -> bool:
         return getattr(self, 'discount', None) is not None
