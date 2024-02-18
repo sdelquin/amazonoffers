@@ -2,3 +2,4 @@
 .python-version
 .env
 deliveries.dbm*
+*.log

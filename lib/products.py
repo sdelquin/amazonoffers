@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from logzero import logger
 
 import settings
 from lib.utils import str2num
@@ -7,9 +8,12 @@ from lib.utils import str2num
 
 class Product:
     def __init__(self, alias: str, url: str):
+        logger.info(f'📦 Building product "{alias}"')
         self.alias = alias
         self.url = url
+        logger.debug(f'🌐 Request to {url}')
         response = requests.get(url, headers={'User-Agent': settings.USER_AGENT})
+        logger.debug('🍿 Extracting product features')
         soup = BeautifulSoup(response.content, 'html.parser')
         if span := soup.find('span', id='productTitle'):
             self.name = span.text.strip()
