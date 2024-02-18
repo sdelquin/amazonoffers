@@ -17,8 +17,8 @@ class Dispatcher:
             products_config = cfg_block['products']
             for product_config in products_config:
                 product = Product(product_config['alias'], product_config['url'])
+                tracking = Tracking(user, product)
                 if product.has_discount():
-                    tracking = Tracking(user, product)
                     if notified_price := tracking.get_notified_price():
                         if product.current_price < notified_price:
                             tracking.update_delivery()
@@ -26,5 +26,5 @@ class Dispatcher:
                     else:
                         tracking.update_delivery()
                         tracking.notify()
-                else:
+                elif tracking.get_notified_price():
                     tracking.remove_delivery()

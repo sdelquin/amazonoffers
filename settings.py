@@ -11,3 +11,7 @@ USER_AGENT = config(
 )
 CONFIG_PATH = config('CONFIG_PATH', default=PROJECT_DIR / 'config.yaml', cast=Path)
 STORAGE_PATH = config('STORAGE_PATH', default='deliveries.dbm')
+
+SENDGRID_APIKEY = config('SENDGRID_APIKEY', default='your-sendgrid-api-key-here')
+SENDGRID_FROM_ADDR = config('SENDGRID_FROM_ADDR', default='from@example.com')
+SENDGRID_FROM_NAME = config('SENDGRID_FROM_NAME', default='From Example')
