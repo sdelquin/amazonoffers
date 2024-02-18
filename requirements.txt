@@ -5,3 +5,4 @@ pyyaml
 sendgrify
 logzero
 typer
+fake-useragent
