@@ -16,10 +16,11 @@ class Tracking:
         settings.SENDGRID_FROM_NAME,
     )
 
-    def __init__(self, user: User, product: Product):
+    def __init__(self, user: User, product: Product, min_discount=0):
         logger.info(f'🔎 Building tracking "{user.name}:{product.alias}"')
         self.user = user
         self.product = product
+        self.min_discount = min_discount
 
     @property
     def id(self) -> str:

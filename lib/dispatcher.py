@@ -22,27 +22,38 @@ class Dispatcher:
                 except Exception as err:
                     logger.error(err)
                 else:
-                    self.trackings.append(Tracking(user, product))
+                    self.trackings.append(
+                        Tracking(user, product, product_config.get('min_discount', 0))
+                    )
 
     def dispatch(self):
         logger.info('🟩 Dispatching trackings')
         for tracking in self.trackings:
             if tracking.product.has_discount():
                 logger.debug(f'🔥 Product "{tracking.product.alias}" has discount!')
-                if notified_price := tracking.get_notified_price():
-                    if tracking.product.current_price < notified_price:
-                        logger.debug('Current price is lower than notified price (in the past)')
+                if tracking.product.perc_discount >= tracking.min_discount:
+                    if tracking.min_discount > 0:
+                        logger.debug(
+                            f'✨ Product "{tracking.product.alias}" is over the required discount of {tracking.min_discount}%'
+                        )
+                    if notified_price := tracking.get_notified_price():
+                        if tracking.product.current_price < notified_price:
+                            logger.debug('Current price is lower than notified price (in the past)')
+                            tracking.update_delivery()
+                            tracking.notify()
+                        else:
+                            logger.debug(
+                                f'👎 Notification discarded. It was already notified to "{tracking.user}"'
+                            )
+                    else:
                         tracking.update_delivery()
                         tracking.notify()
-                    else:
-                        logger.debug(
-                            f'👎 Notification discarded. It was already notified to "{tracking.user}"'
-                        )
                 else:
-                    tracking.update_delivery()
-                    tracking.notify()
+                    logger.debug(
+                        f'😕 Product "{tracking.product.alias}" has not reach the required discount of {tracking.min_discount}%'
+                    )
             else:
-                logger.debug(f'😐 Product "{tracking.product.alias}" has normal price')
+                logger.debug(f'⚪ Product "{tracking.product.alias}" has normal price')
                 if tracking.get_notified_price():
                     logger.debug('Delivery will be removed since product has no yet discount')
                     tracking.remove_delivery()

@@ -1,8 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 from logzero import logger
 
-import settings
 from lib.utils import str2num
 
 
@@ -12,13 +12,18 @@ class Product:
         self.alias = alias
         self.url = url
         logger.debug(f'🌐 Request to {url}')
-        response = requests.get(url, headers={'User-Agent': settings.USER_AGENT})
+        ua = UserAgent()
+        response = requests.get(url, headers={'User-Agent': ua.random})
+        if 'CAPTCHA' in response.content.decode().upper():
+            raise ValueError('❌ Captcha required. No way to keep parsing!')
         logger.debug('🍿 Extracting product features')
         soup = BeautifulSoup(response.content, 'html.parser')
         if span := soup.find('span', id='productTitle'):
             self.name = span.text.strip()
         if span := soup.find('span', class_='a-price-whole'):
             self.current_price = str2num(span.text)
+        else:
+            logger.error('🆘 Not able to locate current price of product')
         if span := soup.find('span', class_='savingsPercentage'):
             self.perc_discount = str2num(span.text, int)
             if span := soup.find('span', class_='a-price a-text-price'):
