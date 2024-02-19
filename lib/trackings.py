@@ -16,11 +16,10 @@ class Tracking:
         settings.SENDGRID_FROM_NAME,
     )
 
-    def __init__(self, user: User, product: Product, min_discount=0):
+    def __init__(self, user: User, product: Product):
         logger.info(f'🔎 Building tracking "{user.name}:{product.alias}"')
         self.user = user
         self.product = product
-        self.min_discount = min_discount
 
     @property
     def id(self) -> str:
@@ -30,11 +29,11 @@ class Tracking:
         return self.deliveries.get(self.id, None)
 
     def remove_delivery(self) -> None:
-        logger.debug('Removing delivery')
+        logger.debug('❌ Removing delivery')
         del self.deliveries[self.id]
 
     def update_delivery(self) -> None:
-        logger.debug('Updating delivery')
+        logger.debug('📋 Updating delivery')
         self.deliveries[self.id] = self.product.current_price
 
     def notify(self) -> None:
