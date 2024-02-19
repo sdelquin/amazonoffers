@@ -24,38 +24,8 @@ class Dispatcher:
                 except Exception as err:
                     logger.error(err)
                     continue
-                min_discount = product_config.get('min_discount', 0)
-                tracking = Tracking(user, product)
-                if product.has_discount():
-                    logger.debug(f'🔥 Product "{product.alias}" has discount!')
-                    if product.perc_discount >= min_discount:
-                        if min_discount > 0:
-                            logger.debug(
-                                f'✨ Product "{product.alias}" is over the required discount of {min_discount}%'
-                            )
-                        if notified_price := tracking.get_notified_price():
-                            if product.current_price < notified_price:
-                                logger.debug(
-                                    'Current price is lower than notified price (in the past)'
-                                )
-                                tracking.update_delivery()
-                                tracking.notify()
-                            else:
-                                logger.debug(
-                                    f'👎 Notification discarded. It was already notified to "{user}"'
-                                )
-                        else:
-                            tracking.update_delivery()
-                            tracking.notify()
-                    else:
-                        logger.debug(
-                            f'😕 Product "{product.alias}" has not reach the required discount of {min_discount}%'
-                        )
-                else:
-                    logger.debug(f'⚪ Product "{product.alias}" has normal price')
-                    if tracking.get_notified_price():
-                        logger.debug('Delivery will be removed since product has no yet discount')
-                        tracking.remove_delivery()
+                tracking = Tracking(user, product, product_config.get('min_discount', 0))
+                tracking.dispatch()
 
     def clean_orphan_deliveries(self) -> None:
         logger.info('🧽 Cleaning orphan deliveries')
