@@ -19,7 +19,11 @@ class Dispatcher:
             user = User(user_config['name'], user_config['email'])
             products_config = cfg_block['products']
             for product_config in products_config:
-                product = Product(product_config['alias'], product_config['url'])
+                try:
+                    product = Product(product_config['alias'], product_config['url'])
+                except Exception as err:
+                    logger.error(err)
+                    continue
                 min_discount = product_config.get('min_discount', 0)
                 tracking = Tracking(user, product)
                 if product.has_discount():

@@ -14,6 +14,10 @@ class Product:
         logger.debug(f'🌐 Request to {url}')
         ua = UserAgent()
         response = requests.get(url, headers={'User-Agent': ua.random})
+        if response.status_code != 200:
+            raise BrokenPipeError(
+                f'❌ Response with code {response.status_code}. No way to keep parsing!'
+            )
         if 'CAPTCHA' in response.content.decode().upper():
             raise ValueError('❌ Captcha required. No way to keep parsing!')
         logger.debug('🍿 Extracting product features')
