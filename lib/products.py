@@ -1,10 +1,7 @@
-import requests
 from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
 from logzero import logger
 
-import settings
-from lib.utils import str2num
+from lib.utils import http_get, str2num
 
 
 class Product:
@@ -12,9 +9,7 @@ class Product:
         logger.info(f'📦 Building product "{alias}"')
         self.alias = alias
         self.url = url
-        logger.debug(f'🌐 Request to {url}')
-        ua = UserAgent()
-        response = requests.get(url, headers={'User-Agent': ua.random}, proxies=settings.PROXIES)
+        response = http_get(url)
         if response.status_code != 200:
             raise BrokenPipeError(
                 f'❌ Response with code {response.status_code}. No way to keep parsing!'

@@ -1,6 +1,9 @@
 import re
+import time
 
 import logzero
+import requests
+from logzero import logger
 
 import settings
 
@@ -37,3 +40,19 @@ def init_logger():
         formatter=file_formatter,
     )
     return logzero.logger
+
+
+def http_get(
+    url: str,
+    delay: int = settings.DELAY_BETWEEN_REQUESTS,
+    user_agent: str = settings.USER_AGENT,
+    proxies: str = settings.PROXIES,
+) -> requests.Response:
+    logger.debug(f'🌐 Request to {url}')
+    if delay > 0:
+        logger.debug(f'😴 Applying delay of {delay}s.')
+        time.sleep(delay)
+    if proxies:
+        logger.debug(f'🚪 Using proxies {proxies}')
+    logger.debug(f'🔘 User agent: {user_agent}')
+    return requests.get(url, headers={'User-Agent': user_agent}, proxies=settings.PROXIES)
