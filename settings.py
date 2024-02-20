@@ -20,3 +20,6 @@ SENDGRID_FROM_NAME = config('SENDGRID_FROM_NAME', default='From Example')
 LOGFILE = config('LOGFILE', default=PROJECT_DIR / (PROJECT_NAME + '.log'), cast=Path)
 LOGFILE_SIZE = config('LOGFILE_SIZE', cast=float, default=1e6)
 LOGFILE_BACKUP_COUNT = config('LOGFILE_BACKUP_COUNT', cast=int, default=3)
+
+PROXY_URI = config('PROXY_URI', default='')
+PROXIES = dict(http=PROXY_URI, https=PROXY_URI) if PROXY_URI else {}
